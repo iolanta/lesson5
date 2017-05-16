@@ -3,6 +3,7 @@
 #include "stack"
 #include "iostream"
 #include "set"
+#include "vector"
 
 
 char opposite_bracket(char br){
@@ -28,7 +29,7 @@ bool is_closing_bracket(char br){
 }
 
 std::string corrects_brackets(std::string & br){
-    std::stack<char> st;
+    std::vector<char> st;
     auto it = br.begin();
     while(st.empty() && is_closing_bracket(*it)){
         br.insert(it, opposite_bracket(*it));
@@ -37,29 +38,33 @@ std::string corrects_brackets(std::string & br){
 
     while(it != br.end()){
         if (st.empty()){
-            st.push(*it);
+            st.push_back(*it);
             ++it;
         }
         else
-            if (is_closing_bracket(*it) && st.top() != opposite_bracket(*it)){
+            if (is_closing_bracket(*it) &&
+                    std::find(st.begin(), st.end(), opposite_bracket(*it)) == st.end())
+            {
                 br.insert(it, opposite_bracket(*it));
                 it += 2;
             }
             else
             {
-                if(is_closing_bracket(*it) && st.top() == opposite_bracket(*it))
-                    st.pop();
+                if(is_closing_bracket(*it) &&
+                        std::find(st.begin(), st.end(), opposite_bracket(*it)) != st.end())
+                    st.erase(std::find(st.begin(), st.end(), opposite_bracket(*it)));
             else
                     if(!is_closing_bracket(*it))
-                        st.push(*it);
+                        st.push_back(*it);
                 ++it;
             }
     }
 
-    while(!st.empty()){
-        char op_br = st.top();
-        br.push_back(opposite_bracket(op_br));
-        st.pop();
-    }
+    std::for_each(st.begin(), st.end(), [&](char s)->void{
+        if (is_closing_bracket(s))
+            br.insert(br.end() - 1,opposite_bracket(s));
+        else
+            br.push_back(opposite_bracket(s));
+    });
     return br;
 }

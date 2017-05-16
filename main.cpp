@@ -3,7 +3,8 @@
 
 int main()
 {
-    std::string str = "<]{}{([])<";
+    std::string str = "<(((>]";
+    std::cout << "before: " << str << std::endl;
     corrects_brackets(str);
-    std::cout << str;
+    std::cout << "after: " << str << std::endl;
 }
